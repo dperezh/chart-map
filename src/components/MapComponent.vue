@@ -18,8 +18,6 @@ import { COUNTRIES } from '../utils/countries'
 
 core.useTheme(animatedTheme)
 
-// let chart = core.create('chartdiv', maps.MapChart)
-
 export default defineComponent({
   name: 'MapComponent',
   props: {
@@ -32,6 +30,7 @@ export default defineComponent({
   methods: {
   },
   mounted () {
+    // En este primer bloque se crea la grafica
     const chart = core.create('chartdiv', maps.MapChart)
     chart.geodata = charType
     chart.panBehavior = 'rotateLong'
@@ -42,19 +41,20 @@ export default defineComponent({
 
     polygonSeries.useGeodata = true
 
-    // Configure series
+    // Aqui se configura la serie de datos, aqui se pone lo que se va a mostrar en el tooltip y el color
     const polygonTemplate = polygonSeries.mapPolygons.template
     polygonTemplate.tooltipText = '{name}: {populate}'
     polygonTemplate.fill = core.color('#74B266')
-    polygonTemplate.propertyFields.id = 'id'
 
-    // Create hover state and set alternative fill color
+    // Aqui se crea el evento over para todos los poligonos de la grafica
     const hs = polygonTemplate.states.create('hover')
     hs.properties.fill = core.color('#367B25')
 
-    // Add grid
+    // Esto no tengo idea de para que es
     const grid = chart.series.push(new maps.GraticuleSeries())
 
+    // Aqui se le añade el campo adicional a cada dato, en este caso se añade la poblacion,
+    // el nombre de los paises ya viene por defecto en la libreria
     polygonSeries.events.on('inited', function () {
       chart.series.values[0].data.map((polygon) => {
         const country = COUNTRIES.find(resp => resp.id === polygon.id)
@@ -65,6 +65,7 @@ export default defineComponent({
       })
     })
 
+    // Por ultimo actualizamos la grafica para que surtan efectos los cambios
     grid.toBack()
   },
   computed: {
